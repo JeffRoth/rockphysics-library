@@ -1,0 +1,155 @@
+log_display_settings:
+  CALI:
+    color: black
+    min_value: 0
+    max_value: 20
+    xticks: [0, 5, 10, 15, 20]
+  CAL:
+    color: black
+    min_value: 0
+    max_value: 20
+    xticks: [0, 5, 10, 15, 20]
+  DEN:
+    color: red
+    min_value: 1.95
+    max_value: 2.95
+    xticks: [1.95, 2.45, 2.95]
+  RHOB:
+    color: red
+    min_value: 1.95
+    max_value: 2.95
+    xticks: [1.95, 2.45, 2.95]
+  DT:
+    color: purple
+    min_value: 140
+    max_value: 40
+    xticks: [150, 100, 50]
+  VP:
+    color: purple
+    min_value: 1500
+    max_value: 6000
+    xticks: [1500, 3000, 4500, 6000]
+  VS:
+    color: red
+    min_value: 800
+    max_value: 4000
+    xticks: [800, 1800, 2800, 3800]
+  GR:
+    color: green
+    min_value: 0
+    max_value: 200
+    xticks: [0, 50, 100, 150, 200]
+  NEU:
+    color: blue
+    min_value: 0.45
+    max_value: -0.15
+    xticks: [0.45, 0.15, -0.15]
+  RES:
+    color: red
+    min_value: 0.2
+    max_value: 2000
+    xticks: [0.1, 1, 10, 100, 1000]
+    log_scale: 'log'
+  ILD:
+    color: red
+    min_value: 0.2
+    max_value: 2000
+    xticks: [0.1, 1, 10, 100, 1000]
+    log_scale: 'log'
+  FLAG:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 1]
+  VSH:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 0.5, 1]
+    fill_cutoff: 0.5  # VSH fill cutoff value
+  VCL:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 0.5, 1]
+    fill_cutoff: 0.5  # VSH fill cutoff value
+  CALI_TIME:
+    color: black
+    min_value: 0
+    max_value: 20
+    xticks: [0, 5, 10, 15, 20]
+  CAL_TIME:
+    color: black
+    min_value: 0
+    max_value: 20
+    xticks: [0, 5, 10, 15, 20]
+  DEN_TIME:
+    color: red
+    min_value: 1.95
+    max_value: 2.95
+    xticks: [1.95, 2.45, 2.95]
+  RHOB_TIME:
+    color: red
+    min_value: 1.95
+    max_value: 2.95
+    xticks: [1.95, 2.45, 2.95]
+  DT_TIME:
+    color: purple
+    min_value: 140
+    max_value: 40
+    xticks: [150, 100, 50]
+  VP_TIME:
+    color: purple
+    min_value: 1500
+    max_value: 6000
+    xticks: [1500, 3000, 4500, 6000]
+  VS_TIME:
+    color: red
+    min_value: 800
+    max_value: 4000
+    xticks: [800, 1800, 2800, 3800]
+  GR_TIME:
+    color: green
+    min_value: 0
+    max_value: 200
+    xticks: [0, 50, 100, 150, 200]
+  NEU_TIME:
+    color: blue
+    min_value: 0.45
+    max_value: -0.15
+    xticks: [0.45, 0.15, -0.15]
+  RES_TIME:
+    color: red
+    min_value: 0.2
+    max_value: 2000
+    xticks: [0.1, 1, 10, 100, 1000]
+    log_scale: 'log'
+  ILD_TIME:
+    color: red
+    min_value: 0.2
+    max_value: 2000
+    xticks: [0.1, 1, 10, 100, 1000]
+    log_scale: 'log'
+  FLAG_TIME:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 1]
+  VSH_TIME:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 0.5, 1]
+    fill_cutoff: 0.5  # VSH fill cutoff value
+  VCL_TIME:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 0.5, 1]
+    fill_cutoff: 0.5  # VSH fill cutoff value
+  RC_TIME:
+    color: black
+    min_value: -1
+    max_value: 1
+    xticks: [0, 0.5, 1]
+    plot_style: 'spike'

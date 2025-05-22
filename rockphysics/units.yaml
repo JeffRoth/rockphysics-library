@@ -1,0 +1,12 @@
+unit_mapping:
+  OHMM: "ohm * meter"
+  G/CM3: "gram / centimeter**3"
+  GAPI: "API"
+  IN: "inch"
+  M/US: "meter / microsecond"
+  DEGC: "degree_Celsius"
+  FT: "feet"
+  F: "feet"
+  M: "meter"
+  MM: "millimeter"
+  PSI: "pound_force_per_square_inch"
