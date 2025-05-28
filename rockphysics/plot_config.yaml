@@ -1,0 +1,90 @@
+
+defaults:
+  default_log_color: 'black'
+  log_line_width: 0.7
+  track_title_size: 8
+  tick_label_size: 7
+  y_axis_label_size: 9
+  # Default for VSH/VCLAY type logs if not specified further
+  vsh_fill_cutoff: 0.5
+  vsh_sand_fill_color: 'yellow'
+  vsh_shale_fill_color: 'grey'
+  # Default for SYNTHETIC type logs
+  synthetic_fill_color: 'black'
+  # Default for FLAG type logs
+  flag_fill_color: 'red'
+  flag_fill_alpha: 0.3
+
+log_display_settings:
+  CALIPER:
+    color: black
+    min_value: 0
+    max_value: 20
+    xticks: [0, 5, 10, 15, 20]
+  DENSITY:
+    color: red
+    min_value: 1.95
+    max_value: 2.95
+    xticks: [1.95, 2.45, 2.95]
+  P_SONIC:
+    color: purple
+    min_value: 140
+    max_value: 40
+    xticks: [150, 100, 50]
+  S_SONIC:
+    color: purple
+    min_value: 140
+    max_value: 40
+    xticks: [150, 100, 50]
+  P_VELOCITY:
+    color: purple
+    min_value: 1500
+    max_value: 6000
+    xticks: [1500, 3000, 4500, 6000]
+  S_VELOCITY:
+    color: red
+    min_value: 800
+    max_value: 4000
+    xticks: [800, 1800, 2800, 3800]
+  GAMMA_RAY:
+    color: green
+    min_value: 0
+    max_value: 200
+    xticks: [0, 50, 100, 150, 200]
+  NEUTRON_POROSITY:
+    color: blue
+    min_value: 0.45
+    max_value: -0.15
+    xticks: [0.45, 0.15, -0.15]
+  RESISTIVITY:
+    color: red
+    min_value: 0.2
+    max_value: 2000
+    xticks: [0.1, 1, 10, 100, 1000]
+    log_scale: 'log'
+  FLAG:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 1]
+  VOLUME_SHALE:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 0.5, 1]
+    fill_cutoff: 0.5  # VSH fill cutoff value
+  VOLUME_CLAY:
+    color: black
+    min_value: 0
+    max_value: 1
+    xticks: [0, 0.5, 1]
+    fill_cutoff: 0.5  # VSH fill cutoff value
+  REFLECTION_COEFFICIENT:
+    color: black
+    min_value: -1
+    max_value: 1
+    xticks: [-1, 0, 1]
+    plot_style: 'spike'
+  FACIES:
+    color: black
+    min_value: 0

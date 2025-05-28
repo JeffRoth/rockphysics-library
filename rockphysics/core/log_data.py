@@ -74,43 +74,6 @@ class LogData:
             raise ValueError(f"Curve '{old_name}' not found.")
         self.data.rename(columns={old_name: new_name}, inplace=True)
 
-    def get_canonical_log_name(self, mnemonic_to_check, alias_map):
-        """
-        Finds the canonical log name for a given mnemonic.
-        Returns the canonical name if found, otherwise None.
-        """
-        mnemonic_upper = mnemonic_to_check.upper()
-        for canonical_name, aliases in alias_map.items():
-            # Ensure all aliases in the map are also uppercase for consistent comparison
-            if mnemonic_upper in [alias.upper() for alias in aliases]:
-                return canonical_name
-        return None
-
-    # def add_curve(self, log_name: str, data: pd.Series, sort_index: bool = True, drop_duplicates: bool = True, reset_index: bool = False):
-    #     """
-    #     Add a new log curve to the DataFrame.
-
-    #     Args:
-    #         log_name (str): Name of the new log curve.
-    #         data (pd.Series): The data for the new log curve.
-    #         sort_index(bool): if true sort the index.
-    #         drop_duplicates(bool): if true drop duplicate index values.
-    #         reset_index(bool): if true reset the index.
-
-    #     Raises:
-    #         ValueError: if the passed in pandas Series index does not match the LogData index.
-    #     """
-    #     if not data.index.equals(self.data.index):
-    #         raise ValueError("The provided pandas Series index does not match LogData index.")
-
-    #     self.data[log_name] = data
-    #     if sort_index:
-    #         self.data = self.data.sort_index()
-    #     if drop_duplicates:
-    #         self.data = self.data.drop_duplicates() # Note: This drops rows based on all columns, not just index
-    #     if reset_index:
-    #         self.data = self.data.reset_index(drop=True)
-
     def add_curve(self, log_name: str, data: pd.Series, sort_index: bool = True, drop_duplicates: bool = True, reset_index: bool = False):
         """
         Add a new log curve to the DataFrame.
@@ -127,41 +90,6 @@ class LogData:
         """
         if not data.index.equals(self.data.index):
             raise ValueError("The provided pandas Series index does not match LogData index.")
-
-        # if not self.data.empty and not data.index.equals(self.data.index):
-        #     # --- Start Debugging Prints for Index Mismatch ---
-        #     print("DEBUG: Index mismatch in LogData.add_curve for curve:", log_name)
-        #     print(f"DEBUG: self.data.index (name: {self.data.index.name}, dtype: {self.data.index.dtype}, len: {len(self.data.index)})")
-        #     if not self.data.index.empty: print(f"DEBUG: self.data.index[:5]:\n{self.data.index[:5]}...")
-        #     print(f"DEBUG: data.index (name: {data.index.name}, dtype: {data.index.dtype}, len: {len(data.index)})")
-        #     if not data.index.empty: print(f"DEBUG: data.index[:5]:\n{data.index[:5]}...")
-
-        #     if len(self.data.index) == len(data.index):
-        #         if self.data.index.dtype == data.index.dtype:
-        #             if isinstance(self.data.index, pd.Float64Index): # Or check specific float types
-        #                 if np.allclose(self.data.index.values, data.index.values, equal_nan=True):
-        #                     print("DEBUG: Index values are numerically close (np.allclose), but .equals() failed. Possible name or subtle property mismatch.")
-        #                 else:
-        #                     diff_indices = np.where(~np.isclose(self.data.index.values, data.index.values, equal_nan=True))[0]
-        #                     print(f"DEBUG: Index values are NOT close (np.allclose). First few differing indices: {diff_indices[:5]}")
-        #                     if len(diff_indices) > 0:
-        #                         d_idx = diff_indices[0]
-        #                         print(f"DEBUG: Example diff at original index {d_idx}: self.data.index[{d_idx}]={self.data.index[d_idx]}, data.index[{d_idx}]={data.index[d_idx]}")
-        #             else: # Non-float types, simple value comparison might be enough for debug
-        #                 value_mismatch = False
-        #                 for i in range(min(5, len(self.data.index))):
-        #                     if self.data.index[i] != data.index[i]:
-        #                         print(f"DEBUG: Value mismatch at pos {i}: self.data.index[{i}]={self.data.index[i]}, data.index[{i}]={data.index[i]}")
-        #                         value_mismatch = True
-        #                         break
-        #                 if not value_mismatch:
-        #                     print("DEBUG: First 5 values appear same, but equals failed. Deeper issue or later values differ.")
-        #         else:
-        #             print(f"DEBUG: Dtype mismatch: self.data.index.dtype={self.data.index.dtype}, data.index.dtype={data.index.dtype}")
-        #     else:
-        #         print(f"DEBUG: Length mismatch: len(self.data.index)={len(self.data.index)}, len(data.index)={len(data.index)}")
-        #     # --- End Debugging Prints ---
-        #     raise ValueError("The provided pandas Series index does not match LogData index when LogData is not empty.")
 
         self.data[log_name] = data
         if sort_index:

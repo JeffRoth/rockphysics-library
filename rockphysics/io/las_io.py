@@ -16,6 +16,7 @@ def load_las_file(filepath: str) -> LogData:
         FileNotFoundError: If the LAS file does not exist.
         lasio.exceptions.LASException: If there is an error reading the LAS file.
     """
+
     try:
         las = lasio.read(filepath)
         df = las.df()

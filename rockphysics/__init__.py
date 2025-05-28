@@ -9,6 +9,7 @@ from .core.seismic import (
     convert_well_logs_to_time_domain, calculate_reflectivity_series,
     generate_ricker_wavelet, convolve_traces
 )
+from .utils.nomenclature import LogNomenclature
 from .io import load_las_file, save_las_file
 from .models.elastic import (
     dry_modulus, gassmann, calculate_modulus, voigt_average, 
@@ -34,6 +35,7 @@ from .visualization.interactive import interactive_vclay_crossplot, calculate_vc
 
 __all__ = [
     "LogData",
+    "LogNomenclature",
     "load_checkshot_data",
     "create_depth_time_interpolators",
     "resample_log_to_time_domain",

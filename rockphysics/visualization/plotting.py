@@ -25,24 +25,65 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
 
     dataframe = log_data.data # Access the internal DataFrame
 
+    # Attempt to import and instantiate LogNomenclature for log type styling
+    log_nomenclature_instance = None # This will hold the LogNomenclature instance
+    try:
+        from ..utils import nomenclature as nomenclature_py_module # Import the .py file as a module object
+
+        if hasattr(nomenclature_py_module, 'LogNomenclature'):
+            NomenclatureClass = getattr(nomenclature_py_module, 'LogNomenclature')
+            if callable(NomenclatureClass):
+                try:
+                    instance = NomenclatureClass() # Instantiate
+                    if hasattr(instance, 'get_log_type') and callable(instance.get_log_type):
+                        log_nomenclature_instance = instance # Store the usable instance
+                        print("LogNomenclature instance created successfully. Will use it for type-based styling.")
+                    else:
+                        print("Warning: LogNomenclature class instantiated, but its 'get_log_type' method is missing or not callable. Proceeding without type-based styling.")
+                except Exception as e_init:
+                    print(f"Warning: Error initializing LogNomenclature class: {e_init}. Proceeding without type-based styling.")
+            else:
+                print("Warning: 'LogNomenclature' found in nomenclature module, but it's not a callable class. Proceeding without type-based styling.")
+        else:
+            print("Warning: Nomenclature module loaded, but 'LogNomenclature' class not found within it. Proceeding without type-based styling.")
+
+    except ImportError:
+        print("Warning: Nomenclature module (rockphysics.utils.nomenclature) not found. "
+              "Plotting will rely solely on 'plot_config.yaml' mnemonic settings and internal defaults.")
+    except Exception as e:
+        print(f"Warning: General error during nomenclature setup: {e}. "
+              "Plotting will rely solely on 'plot_config.yaml' mnemonic settings and internal defaults.")
+
     # Configuration for log display (colors, scales, etc.)
-    default_log_color = 'blue'
-    log_line_width = 0.7
     track_title_size = 8 
     tick_label_size = 7  
     y_axis_label_size = 9 
     vsh_fill_cutoff = 0.5 # Default VSH fill cutoff
     
     log_dict = {}
+
+    # These will be primary fallbacks, ideally overridden by plot_config.yaml "defaults"
+    default_vsh_fill_cutoff = 0.5
+    default_vsh_sand_fill_color = 'yellow'
+    default_vsh_shale_fill_color = 'grey'
+    default_synthetic_fill_color = 'black'
+    default_flag_fill_color = 'red'
+    default_flag_fill_alpha = 0.3
+    default_log_color = 'blue'
+    default_log_line_width = 0.7
+
+    mnemonic_settings = {}
+    type_default_settings = {}
+    config_defaults = {}
     
     try:
         import rockphysics
         package_root = os.path.dirname(os.path.dirname(rockphysics.__file__)) 
-        config_path_attempt1 = os.path.join(package_root, "config.yaml")
+        config_path_attempt1 = os.path.join(package_root, "plot_config.yaml")
 
         current_file_dir = os.path.dirname(os.path.abspath(__file__))
-        config_path_attempt2 = os.path.join(current_file_dir, "..", "..", "config.yaml") 
-        config_path_attempt3 = os.path.join(current_file_dir, "..", "config.yaml") 
+        config_path_attempt2 = os.path.join(current_file_dir, "..", "..", "plot_config.yaml") 
+        config_path_attempt3 = os.path.join(current_file_dir, "..", "plot_config.yaml") 
 
         config_path = None
         if os.path.exists(config_path_attempt1):
@@ -54,22 +95,33 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
         
         if config_path:
             with open(config_path, "r") as f:
-                config = yaml.safe_load(f)
-            log_dict = config.get("log_display_settings", {})
-            vsh_fill_cutoff = log_dict.get("VSH", {}).get("fill_cutoff", 0.5) # Get VSH specific or global
-            if "VSH" not in log_dict: # If VSH section doesn't exist, check for global
-                 vsh_fill_cutoff = config.get("defaults", {}).get("vsh_fill_cutoff", 0.5)
+                config_data = yaml.safe_load(f)
+            mnemonic_settings = config_data.get("log_display_settings", {})
+            type_default_settings = config_data.get("log_type_settings", {})
+            config_defaults = config_data.get("defaults", {})
             print(f"Loaded display settings from: {config_path}")
         else:
-            print(f"Warning: Configuration file 'config.yaml' not found. Using default plotting parameters.")
+            print(f"Warning: Configuration file 'plot_config.yaml' not found. Using default plotting parameters.")
             
     except ImportError:
         print("Warning: 'rockphysics' package not found for robust config path detection. Trying relative paths for 'config.yaml'.")
     except FileNotFoundError:
-        print(f"Warning: Configuration file 'config.yaml' not found. Using default plotting parameters.")
+        print(f"Warning: Configuration file 'plot_config.yaml' not found. Using default plotting parameters.")
     except Exception as e:
-        print(f"Warning: Error loading 'config.yaml': {e}. Using default plotting parameters.")
+        print(f"Warning: Error loading 'plot_config.yaml': {e}. Using default plotting parameters.")
 
+    # Apply global defaults from config file, falling back to hardcoded defaults
+    default_log_color = config_defaults.get('default_log_color', default_log_color)
+    log_line_width = config_defaults.get('log_line_width', default_log_line_width)
+    track_title_size = config_defaults.get('track_title_size', track_title_size)
+    tick_label_size = config_defaults.get('tick_label_size', tick_label_size)
+    y_axis_label_size = config_defaults.get('y_axis_label_size', y_axis_label_size)
+    default_vsh_fill_cutoff = config_defaults.get('vsh_fill_cutoff', default_vsh_fill_cutoff)
+    default_vsh_sand_fill_color = config_defaults.get('vsh_sand_fill_color', default_vsh_sand_fill_color)
+    default_vsh_shale_fill_color = config_defaults.get('vsh_shale_fill_color', default_vsh_shale_fill_color)
+    default_synthetic_fill_color = config_defaults.get('synthetic_fill_color', default_synthetic_fill_color)
+    default_flag_fill_color = config_defaults.get('flag_fill_color', default_flag_fill_color)
+    default_flag_fill_alpha = config_defaults.get('flag_fill_alpha', default_flag_fill_alpha)
 
     num_tracks = len(tracks)
     if num_tracks == 0:
@@ -129,13 +181,42 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
 
         log_series = dataframe[track_name].copy() # Use a copy to avoid SettingWithCopyWarning on fillna
         
-        # Get log-specific display settings from config or use defaults
-        log_info = log_dict.get(track_name.upper(), {}) 
-        log_color = log_info.get('color', default_log_color)
-        min_log_val_cfg = log_info.get('min_value')
-        max_log_val_cfg = log_info.get('max_value')
-        log_scale = log_info.get('scale', 'linear').lower() 
-        plot_style = log_info.get('plot_style', 'line').lower()
+
+        # Build current_log_info: Layering global defaults, type-based, then mnemonic-specific
+        current_log_info = {
+            'color': default_log_color,
+            'scale': 'linear',
+            'plot_style': 'line',
+            'min_value': None,
+            'max_value': None,
+            'xticks': None,
+            'fill_cutoff': default_vsh_fill_cutoff, # For VSH/VCLAY
+            'vsh_sand_fill_color': default_vsh_sand_fill_color,
+            'vsh_shale_fill_color': default_vsh_shale_fill_color,
+            'synthetic_fill_color': default_synthetic_fill_color,
+            'flag_fill_color': default_flag_fill_color,
+            'flag_fill_alpha': default_flag_fill_alpha,
+        }
+
+        if log_nomenclature_instance:
+            try:
+                log_type = log_nomenclature_instance.get_log_type(track_name)
+
+                if log_type:
+                    type_settings = type_default_settings.get(log_type.upper(), {})
+                    current_log_info.update(type_settings)
+            except Exception as e_nom:
+                print(f"Warning: Error getting log type for '{track_name}' from nomenclature module: {e_nom}")
+
+        mnemonic_specific_config = mnemonic_settings.get(log_type.upper(), {})
+        current_log_info.update(mnemonic_specific_config) # Mnemonic settings override others
+
+        # Extract final settings for the current track
+        log_color = current_log_info['color']
+        min_log_val_cfg = current_log_info.get('min_value')
+        max_log_val_cfg = current_log_info.get('max_value')
+        log_scale = current_log_info.get('scale', 'linear').lower()
+        plot_style = current_log_info.get('plot_style', 'line').lower()
 
         # Determine min/max for the curve, preferring config values
         current_min_log = log_series.min() if pd.isna(min_log_val_cfg) else min_log_val_cfg
@@ -199,7 +280,8 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
         
         ax.set_xlim(current_min_log, current_max_log)
         
-        log_xticks_cfg = log_info.get('xticks')
+        # log_xticks_cfg = log_info.get('xticks')
+        log_xticks_cfg = current_log_info.get('xticks')
         if log_xticks_cfg:
             ax.set_xticks(log_xticks_cfg)
         elif plot_style == 'spike': # Auto-ticks for spike plots, ensuring 0 is included
@@ -212,43 +294,90 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
 
         # Special fills (only for line plots, not for spike plots)
         if plot_style == 'line':
-            if 'VSH' in track_name.upper() or 'VCLAY' in track_name.upper(): 
-                fill_min_vsh = current_min_log 
+            # if 'VSH' in track_name.upper() or 'VCLAY' in track_name.upper(): 
+            if log_type == 'VOLUME_SHALE' or log_type == 'VOLUME_CLAY':
+                # fill_min_vsh = current_min_log 
+                track_vsh_fill_cutoff = current_log_info.get('fill_cutoff', default_vsh_fill_cutoff)
+                sand_color = current_log_info.get('vsh_sand_fill_color', default_vsh_sand_fill_color)
+                shale_color = current_log_info.get('vsh_shale_fill_color', default_vsh_shale_fill_color)
                 ax.fill_betweenx(
                     dataframe.index,
                     log_series,
                     1, 
-                    where=log_series < vsh_fill_cutoff, 
-                    facecolor='yellow',
+                    # where=log_series < vsh_fill_cutoff, 
+                    # facecolor='yellow',
+                    where=log_series < track_vsh_fill_cutoff,
+                    facecolor=sand_color,
                     interpolate=True
                 )
                 ax.fill_betweenx(
                     dataframe.index,
                     log_series,
                     1,
-                    where=log_series >= vsh_fill_cutoff, 
-                    facecolor='grey',
+                    # where=log_series >= vsh_fill_cutoff, 
+                    # facecolor='grey',
+                    where=log_series >= track_vsh_fill_cutoff,
+                    facecolor=shale_color,
                     interpolate=True
                 )
 
-            if 'FLAG' in track_name.upper(): 
+            # if 'FLAG' in track_name.upper():
+            if log_type == 'FLAG':
+                flag_color = current_log_info.get('flag_fill_color', default_flag_fill_color)
+                flag_alpha = current_log_info.get('flag_fill_alpha', default_flag_fill_alpha)
                 ax.fill_betweenx(
                     dataframe.index,
                     current_min_log,
                     log_series, 
                     where=log_series > 0, 
-                    facecolor='red',
+                    # facecolor='red',
+                    facecolor=flag_color,
                     interpolate=False,
-                    alpha=0.3
+                    # alpha=0.3
+                    alpha=flag_alpha
                 )
+
+            if log_type == 'FACIES':
+                unique_facies_values = sorted(log_series.dropna().unique())
+                num_unique_facies = len(unique_facies_values)
+
+                if num_unique_facies == 0:
+                    print(f"Warning: No valid facies values found in track '{track_name}'. Skipping facies fill.")
+                else:
+                    # Generate a color map for the unique facies values
+                    if num_unique_facies <= 10:
+                        # Use a fixed set of colors for up to 10 unique facies
+                        cmap = plt.cm.get_cmap('tab10', num_unique_facies)
+                    elif num_unique_facies <= 20:
+                        # Use a fixed set of colors for up to 20 unique facies
+                        cmap = plt.cm.get_cmap('tab20', num_unique_facies)
+                    else:
+                        # Use a viridis colormap for more than 20 unique facies
+                        cmap = plt.cm.viridis
+                    # Create a mapping from facies value to color
+                    facies_color_map = {facies_value: cmap(i % cmap.N) for i, facies_value in enumerate(unique_facies_values)}
                 
-            if 'SYNTHETIC' in track_name.upper(): 
+                    for facies_val, color_val in facies_color_map.items():
+                        ax.fill_betweenx(
+                            dataframe.index,
+                            0,  # Fill from the left edge of the track
+                            log_series,  # Fill to the log
+                            where=(log_series == facies_val),
+                            facecolor=color_val,
+                            interpolate=False, # Crucial for discrete facies codes
+                            # label=f'Facies {facies_val}' # For potential legend
+                        )
+
+            # if 'SYNTHETIC' in track_name.upper(): 
+            if log_type == 'SYNTHETIC':
+                synth_color = current_log_info.get('synthetic_fill_color', default_synthetic_fill_color)
                 ax.fill_betweenx(
                     dataframe.index,
                     0,
                     log_series, 
                     where=log_series > 0, 
-                    facecolor='black',
+                    # facecolor='black',
+                    facecolor=synth_color,
                     interpolate=False
                 )
 

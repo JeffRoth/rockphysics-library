@@ -1,0 +1,179 @@
+LOG_MNEMONIC_ALIASES:
+
+  CALIPER:
+    - CALI
+    - CAL
+    - CALI_TIME
+    - CAL_TIME
+    - HCAL
+    - CALZ
+    - C1
+    - C2
+  DENSITY:
+    - DEN
+    - RHOB
+    - DEN_TIME
+    - RHOB_TIME
+    - RHO
+    - RHOZ
+    - DENS
+    - ZDNL
+    - DENP
+  P_SONIC:
+    - DT
+    - DT_TIME
+    - AC
+    - DTCO
+    - DTC
+    - DTLN
+    - SLOG
+    - DTTP
+    - DTTS
+    - DT2P
+    - DT2S
+  S_SONIC:
+    - DT2S
+    - DTSH
+    - DTSM
+    - DTSC
+    - DTSHEAR
+    - DELTAS
+    - DTSS
+    - DT_SHEAR
+  P_VELOCITY:
+    - VP
+    - VP_TIME
+    - VELP
+  S_VELOCITY:
+    - VS
+    - VS_TIME
+    - VELS
+  GAMMA_RAY:
+    - GR
+    - GR_TIME
+    - GAM
+    - GRC
+    - CGR
+    - HCGR
+    - SGR
+    - KTH
+    - URAN
+    - THOR
+  NEUTRON_POROSITY:
+    - NEU
+    - NEU_TIME
+    - NPHI
+    - NPOR
+    - NPSS
+    - NPLS
+    - NPLD
+    - TNPH
+    - NEU_LS
+    - NEU_SS
+    - NEU_UNK
+  RESISTIVITY:
+    - RES
+    - RESDEP
+    - RESMED
+    - RESSLW
+    - ILD
+    - RES_TIME
+    - ILD_TIME
+    - RT
+    - OHMM
+    - LLD
+    - LLS
+    - ILM
+    - ATRT
+    - AORT
+    - AIT_RTE
+    - AIT_RME
+    - AIT_RSH
+  FLAG:
+    - FLAG
+    - FLAG_TIME
+  VOLUME_SHALE:
+    - VSH
+    - VSH_TIME
+    - VSHL
+    - VSHGR
+    - VSHN
+    - VSHD
+  VOLUME_CLAY:
+    - VCL
+    - VCL_TIME
+    - VCLW
+    - VCLA
+  REFLECTION_COEFFICIENT:
+    - RC_TIME
+    - RC
+
+  # Common additional log types
+  SPONTANEOUS_POTENTIAL:
+    - SP
+    - SPNV
+    - SPVAL
+  PHOTOELECTRIC_FACTOR:
+    - PEF
+    - PE
+    - PEFZ
+    - PEFL
+  BIT_SIZE:
+    - BS
+    - BIT
+    - BSAL
+    - BITN
+  TENSION:
+    - TENS
+    - TEN
+    - TENS_AVG
+  EFFECTIVE_POROSITY:
+    - PHIE
+    - POTE
+    - PORE
+    - POR
+    - EFFP
+    - PHIA
+    - PHI
+  TOTAL_POROSITY:
+    - PHIT
+    - POTT
+    - TPOR
+    - TNPH
+    - PTOR
+  DENSITY_POROSITY:
+    - DPHI
+    - PHID
+    - DPOR
+    - PORL
+    - PORD
+    - RHOP
+  WATER_SATURATION:
+    - SW
+    - SWT
+    - SWE
+    - WS
+    - SATW
+    - SW_EFF
+  PERMEABILITY:
+    - PERM
+    - K
+    - PER
+    - PERMH
+    - PERMX
+    - PERMY
+    - PERMZ
+    - KLOGH
+  TEMPERATURE:
+    - TEMP
+    - TEM
+    - BHT
+    - TMPU
+    - TEMP_F
+    - TEMP_C
+  PRESSURE:
+    - PRES
+    - PRESS
+    - HP
+    - FP
+    - APRS
