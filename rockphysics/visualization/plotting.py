@@ -76,11 +76,11 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
     try:
         import rockphysics
         package_root = os.path.dirname(os.path.dirname(rockphysics.__file__)) 
-        config_path_attempt1 = os.path.join(package_root, "plot_config.yaml")
+        config_path_attempt1 = os.path.join(package_root, "resources/plot_config.yaml")
 
         current_file_dir = os.path.dirname(os.path.abspath(__file__))
-        config_path_attempt2 = os.path.join(current_file_dir, "..", "..", "plot_config.yaml") 
-        config_path_attempt3 = os.path.join(current_file_dir, "..", "plot_config.yaml") 
+        config_path_attempt2 = os.path.join(current_file_dir, "..", "..", "/resources/plot_config.yaml") 
+        config_path_attempt3 = os.path.join(current_file_dir, "..", "resources/plot_config.yaml") 
 
         config_path = None
         if os.path.exists(config_path_attempt1):

@@ -3,7 +3,7 @@ from pathlib import Path
 import pandas as pd # Assuming you use pandas for log data
 
 # Define a default path or allow it to be configured
-DEFAULT_ALIAS_FILEPATH = Path(__file__).resolve().parent.parent / "log_mnemonic_aliases.yaml"
+DEFAULT_ALIAS_FILEPATH = Path(__file__).resolve().parent.parent / "resources/log_mnemonic_aliases.yaml"
 
 class LogNomenclature:
     def __init__(self, alias_filepath=None):
