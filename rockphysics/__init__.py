@@ -12,9 +12,9 @@ from .core.seismic import (
 from .utils.nomenclature import LogNomenclature
 from .io import load_las_file, save_las_file
 from .models.elastic import (
-    dry_modulus, gassmann, calculate_modulus, voigt_average, 
-    reuss_average, greenberg_castagna, hill_average, calculate_velocity,
-    calculate_impedance
+    dry_modulus, gassmann, bulk_modulus, shear_modulus, voigt_average, 
+    reuss_average, greenberg_castagna, hill_average, p_wave_velocity, s_wave_velocity,
+    acoustic_impedance
 )
 from .models.fluid import (
     water_density, oil_density, gas_density,
@@ -22,7 +22,7 @@ from .models.fluid import (
 )
 from .core.petrophysics import (
     density_porosity, sonic_porosity,
-    vshale_from_GR, calculate_vclay_neutron_density,
+    vshale_from_GR, vclay_from_neutron_density,
     archie_saturation
 )
 from .utils.general_utils import (
@@ -47,16 +47,21 @@ __all__ = [
     "save_las_file",
     "dry_modulus",
     "gassmann",
-    "calculate_modulus",
+    "bulk_modulus",
+    "shear_modulus",
     "voigt_average",
     "reuss_average",
     "hill_average",
-    "calculate_velocity",
-    "calculate_impedance",
+    "p_wave_velocity",
+    "s_wave_velocity",
+    "acoustic_impedance",
     "greenberg_castagna",
     "water_density",
     "oil_density",
     "gas_density",
+    "water_bulk_modulus",
+    "oil_bulk_modulus",
+    "gas_bulk_modulus",
     "density_porosity",
     "sonic_porosity",
     "archie_saturation",
@@ -70,7 +75,7 @@ __all__ = [
     "vp_from_dt",
     "vs_from_dts",
     "vshale_from_GR",
-    "calculate_vclay_neutron_density",
+    "vclay_from_neutron_density",
     "plot_logs",
     "interactive_vclay_crossplot",
     "calculate_vclay_neutron_density_xplot"

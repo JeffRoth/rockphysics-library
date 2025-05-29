@@ -58,9 +58,6 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
     track_title_size = 8 
     tick_label_size = 7  
     y_axis_label_size = 9 
-    vsh_fill_cutoff = 0.5 # Default VSH fill cutoff
-    
-    log_dict = {}
 
     # These will be primary fallbacks, ideally overridden by plot_config.yaml "defaults"
     default_vsh_fill_cutoff = 0.5
@@ -72,8 +69,8 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
     default_log_color = 'blue'
     default_log_line_width = 0.7
 
-    mnemonic_settings = {}
-    type_default_settings = {}
+    log_type_display_settings = {}
+    default_display_settings = {}
     config_defaults = {}
     
     try:
@@ -96,8 +93,8 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
         if config_path:
             with open(config_path, "r") as f:
                 config_data = yaml.safe_load(f)
-            mnemonic_settings = config_data.get("log_display_settings", {})
-            type_default_settings = config_data.get("log_type_settings", {})
+            log_type_display_settings = config_data.get("log_display_settings", {})
+            default_display_settings = config_data.get("defaults", {})
             config_defaults = config_data.get("defaults", {})
             print(f"Loaded display settings from: {config_path}")
         else:
@@ -146,7 +143,7 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
     if max_val_display == 'auto':
         max_val_display = max_y
     
-    # Determine y-axis label based on LogData domain
+    # Determine y-axis label based on LogData domain (depth or time)
     y_label = "Index" 
     y_unit = ""
     if hasattr(log_data, 'domain'):
@@ -198,18 +195,17 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
             'flag_fill_alpha': default_flag_fill_alpha,
         }
 
+        current_log_info.update(default_display_settings) # Start with global defaults
+
         if log_nomenclature_instance:
             try:
                 log_type = log_nomenclature_instance.get_log_type(track_name)
 
                 if log_type:
-                    type_settings = type_default_settings.get(log_type.upper(), {})
+                    type_settings = log_type_display_settings.get(log_type.upper(), {})
                     current_log_info.update(type_settings)
             except Exception as e_nom:
                 print(f"Warning: Error getting log type for '{track_name}' from nomenclature module: {e_nom}")
-
-        mnemonic_specific_config = mnemonic_settings.get(log_type.upper(), {})
-        current_log_info.update(mnemonic_specific_config) # Mnemonic settings override others
 
         # Extract final settings for the current track
         log_color = current_log_info['color']

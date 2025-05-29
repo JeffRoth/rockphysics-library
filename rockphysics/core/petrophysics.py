@@ -1,8 +1,6 @@
 import pandas as pd
 from typing import Union
 
-# ureg = pint.UnitRegistry() # Define if using pint Quantities for matrix/fluid density
-# For this file, the original seems to use floats for matrix/fluid_density, so pint might not be strictly needed here
 def density_porosity(
     bulk_density: pd.Series,
     matrix_density: float = 2.65,
@@ -15,9 +13,9 @@ def density_porosity(
 
     Args:
         bulk_density (pd.Series): Bulk density log
-        matrix_density (pint.Quantity): Density of the rock matrix.
+        matrix_density (float): Density of the rock matrix.
             Defaults to 2.65 g/cm^3.
-        fluid_density (pint.Quantity): Density of the pore fluid.
+        fluid_density (float): Density of the pore fluid.
             Defaults to 1.0 g/cm^3.
 
     Returns:
@@ -49,9 +47,9 @@ def sonic_porosity(
     Args:
         delta_t (pd.Series): Sonic transit time log, with units
             attached (e.g., us/ft).
-        delta_t_matrix (pint.Quantity): Sonic transit time of the
+        delta_t_matrix (float): Sonic transit time of the
             rock matrix. Defaults to 55.5 us/ft (sandstone).
-        delta_t_fluid (pint.Quantity): Sonic transit time of the
+        delta_t_fluid (float): Sonic transit time of the
             pore fluid. Defaults to 189.0 us/ft (water).
 
     Returns:
@@ -60,6 +58,9 @@ def sonic_porosity(
     Raises:
         ValueError: If delta_t_matrix equals delta_t_fluid.
     """
+
+    if (delta_t_matrix - delta_t_fluid) == 0:
+        raise ValueError("Matrix density cannot equal fluid density.")
 
     porosity = ((delta_t - delta_t_matrix) / (delta_t_fluid - delta_t_matrix))
     return porosity
@@ -83,7 +84,7 @@ def vshale_from_GR(gr_log: pd.Series, gr_clean: float, gr_shale: float) -> pd.Se
     return (gr_log - gr_clean) / (gr_shale - gr_clean)
 
 
-def calculate_vclay_neutron_density(
+def vclay_from_neutron_density(
     nphi: pd.Series,
     rhob: pd.Series,
     nphi_clean: float,
@@ -179,4 +180,4 @@ def archie_saturation(
         raise ValueError("Resistivity values must be positive.")
 
     Sw = ((a * rw) / (r * phi ** m)) ** (1 / n)
-    return Sw  # Ensure dimensionless output
+    return Sw

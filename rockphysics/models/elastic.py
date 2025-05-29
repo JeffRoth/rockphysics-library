@@ -55,22 +55,22 @@ def greenberg_castagna(vp: pd.Series, vshale: pd.Series) -> pd.Series:
     using the Greenberg and Castagna relation, accounting for sand-shale mixtures.
 
     Args:
-        vp (pd.Series): Compressional wave velocity (Vp) log.
+        vp (pd.Series): Compressional wave velocity (Vp) log in m/s.
         vshale (pd.Series): Volume of shale (VSH) log.
 
     Returns:
         pd.Series: Predicted shear wave velocity (Vs) log.
     """
-    vs_sand= 0.80416*vp/1000 - 0.85588 # km/s
-    vs_shale= 0.76969*vp/1000 - 0.86735 #km/s 
+    vs_sand= 0.80416*vp - 0.85588
+    vs_shale= 0.76969*vp - 0.86735
 
     vs_arith= (1-vshale)*vs_sand+ vshale*vs_shale
     vs_harm=( (1-vshale)/vs_sand +vshale/vs_shale )**-1
     vs= 0.5*(vs_arith+vs_harm)
-    return vs*1000
+    return vs
 
 
-def calculate_modulus(
+def bulk_modulus(
     p_velocity: pd.Series,
     s_velocity: pd.Series,
     density: pd.Series
@@ -79,9 +79,9 @@ def calculate_modulus(
     Calculate the bulk and shear moduli from P-wave and S-wave velocities.
 
     Args:
-        p_velocity (pd.Series): P-wave velocity.
-        s_velocity (pd.Series): S-wave velocity.
-        density (pd.Series): Density of the rock.
+        p_velocity (pd.Series): P-wave velocity in m/s
+        s_velocity (pd.Series): S-wave velocity in m/s.
+        density (pd.Series): Density of the rock in kg/m^3.
 
     Returns:
         pd.Series: Bulk modulus of the rock.
@@ -90,8 +90,28 @@ def calculate_modulus(
     s_velocity = s_velocity/1000  # Convert to km/s
 
     bulk_modulus = density * (p_velocity ** 2 - 4/3 * s_velocity ** 2)
+    return bulk_modulus
+
+
+def shear_modulus(
+    s_velocity: pd.Series,
+    density: pd.Series
+) -> pd.Series:
+    """
+    Calculate the shear modulus from S-wave velocities.
+
+    Args:
+        p_velocity (pd.Series): P-wave velocity in m/s
+        s_velocity (pd.Series): S-wave velocity in m/s.
+        density (pd.Series): Density of the rock in kg/m^3.
+
+    Returns:
+        pd.Series: Bulk modulus of the rock.
+    """
+    s_velocity = s_velocity/1000  # Convert to km/s
+
     shear_modulus = density * s_velocity ** 2
-    return bulk_modulus, shear_modulus
+    return shear_modulus
 
 
 def dry_modulus(
@@ -146,7 +166,7 @@ def gassmann(
     ))
 
 
-def calculate_velocity(
+def p_wave_velocity(
     bulk_modulus: pd.Series,
     shear_modulus: pd.Series,
     density: pd.Series
@@ -157,17 +177,37 @@ def calculate_velocity(
     Args:
         bulk_modulus (pd.Series): Bulk modulus of the rock.
         shear_modulus (pd.Series): Shear modulus of the rock.
-        density (pd.Series): Density of the rock.
+        density (pd.Series): Density of the rock in kg/m^3.
 
     Returns:
         pd.Series: P-wave and S-wave velocities of the rock.
     """
     p_velocity = ((bulk_modulus + 4/3 * shear_modulus) / density) ** 0.5
+
+    return p_velocity
+
+
+def s_wave_velocity(
+    shear_modulus: pd.Series,
+    density: pd.Series
+) -> pd.Series:
+    """
+    Calculate the P-wave and S-wave velocities from bulk and shear moduli.
+
+    Args:
+        bulk_modulus (pd.Series): Bulk modulus of the rock.
+        shear_modulus (pd.Series): Shear modulus of the rock.
+        density (pd.Series): Density of the rock in kg/m^3.
+
+    Returns:
+        pd.Series: P-wave and S-wave velocities of the rock.
+    """
     s_velocity = (shear_modulus / density) ** 0.5
-    return p_velocity * 1000, s_velocity * 1000  # Convert to km/s
+
+    return s_velocity
 
 
-def calculate_impedance(
+def acoustic_impedance(
     p_velocity: pd.Series,
     density: pd.Series
 ) -> pd.Series:
@@ -175,8 +215,8 @@ def calculate_impedance(
     Calculate the acoustic impedance from P-wave velocity and density.
 
     Args:
-        p_velocity (pd.Series): P-wave velocity.
-        density (pd.Series): Density of the rock.
+        p_velocity (pd.Series): P-wave velocity in m/s.
+        density (pd.Series): Density of the rock in kg/m^3.
 
     Returns:
         pd.Series: Acoustic impedance of the rock.
