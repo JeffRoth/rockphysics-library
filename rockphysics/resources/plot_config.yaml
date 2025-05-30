@@ -56,6 +56,11 @@ log_display_settings:
     min_value: 0.45
     max_value: -0.15
     xticks: [0.45, 0.15, -0.15]
+  POROSITY:
+    color: blue
+    min_value: 0.0
+    max_value: 0.4
+    xticks: [0.0, 0.1, 0.2, 0.3, 0.4]
   RESISTIVITY:
     color: red
     min_value: 0.2

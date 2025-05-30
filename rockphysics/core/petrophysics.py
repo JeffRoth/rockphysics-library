@@ -29,10 +29,10 @@ def density_porosity(
         raise ValueError("Matrix density cannot equal fluid density.")
 
     porosity = ((matrix_density - bulk_density) / (matrix_density - fluid_density))
-    return porosity
+    return porosity.clip(lower=0, upper=1)  # Ensure porosity is within [0, 1]
 
 
-def sonic_porosity(
+def sonic_porosity_wyllie(
     delta_t: pd.Series,
     delta_t_matrix: float = 55.5,
     delta_t_fluid: float = 189.0
@@ -48,9 +48,11 @@ def sonic_porosity(
         delta_t (pd.Series): Sonic transit time log, with units
             attached (e.g., us/ft).
         delta_t_matrix (float): Sonic transit time of the
-            rock matrix. Defaults to 55.5 us/ft (sandstone).
+            rock matrix. Defaults to 55.5 us/ft (sandstone). Other common values
+            are 47.5 us/ft (limestone) and 43.5 us/ft (dolomite).
         delta_t_fluid (float): Sonic transit time of the
-            pore fluid. Defaults to 189.0 us/ft (water).
+            pore fluid. Defaults to 189.0 us/ft (water). Typical values
+            range from 189 us/ft to 204 us/ft for freshwater.
 
     Returns:
         pd.Series: Porosity log (dimensionless).
@@ -63,7 +65,39 @@ def sonic_porosity(
         raise ValueError("Matrix density cannot equal fluid density.")
 
     porosity = ((delta_t - delta_t_matrix) / (delta_t_fluid - delta_t_matrix))
-    return porosity
+    return porosity.clip(lower=0, upper=1)  # Ensure porosity is within [0, 1]
+
+
+def sonic_porosity_rhg(
+    delta_t: pd.Series,
+    delta_t_matrix: float = 55.5,
+    c: float = 0.67
+    ) -> pd.Series:
+    """    Calculate porosity from sonic transit time (delta_t)
+    using the RHG (Reuss-Hill-Greenberg) equation.
+    Reference: Greenberg, M. L., & Castagna, J. P. (1992).
+    Shear-wave velocity estimation in porous rocks: A new look at the
+    relation between compressional and shear velocities.
+    Geophysics, 57(6), 1016-1025.
+    
+    Args:
+        delta_t (pd.Series): Sonic transit time log, with units
+            attached (e.g., us/ft).
+        delta_t_matrix (float): Sonic transit time of the
+            rock matrix. Defaults to 55.5 us/ft (sandstone). Other common values
+            are 47.5 us/ft (limestone) and 43.5 us/ft (dolomite).
+        c (float): Constant for the RHG equation, typically around 0.67.
+    Returns:
+        pd.Series: Porosity log (dimensionless).
+    Raises:
+        ValueError: If delta_t_matrix is zero.
+    """
+    if delta_t_matrix == 0:
+        raise ValueError("Matrix sonic transit time cannot be zero.")
+    
+    # Calculate porosity using the RHG equation
+    porosity = c * (delta_t - delta_t_matrix) / delta_t
+    return porosity.clip(lower=0, upper=1)  # Ensure porosity is within [0, 1]
 
 
 def vshale_from_GR(gr_log: pd.Series, gr_clean: float, gr_shale: float) -> pd.Series:
@@ -82,6 +116,21 @@ def vshale_from_GR(gr_log: pd.Series, gr_clean: float, gr_shale: float) -> pd.Se
         pd.Series: Volume of shale (VSH) log.
     """
     return (gr_log - gr_clean) / (gr_shale - gr_clean)
+
+def vshale_from_SP(sp_log: pd.Series, sp_clean: float, sp_shale: float) -> pd.Series:
+    """
+    Calculate the volume of shale (VSH) from the Spontaneous Potential (SP) log
+    using a linear interpolation between clean sand and pure shale cutoffs.
+
+    Args:
+        sp_log (pd.Series): Spontaneous Potential log.
+        sp_clean (float): SP value for clean sand (0% VCLAY).
+        sp_shale (float): SP value for pure shale (100% VCLAY).
+
+    Returns:
+        pd.Series: Volume of shale (VSH) log.
+    """
+    return (sp_shale - sp_log) / (sp_shale - sp_clean)
 
 
 def vclay_from_neutron_density(
@@ -133,12 +182,13 @@ def vclay_from_neutron_density(
     
 
 def archie_saturation(
-    a: float,
-    m: float,
-    n: float,
     phi: Union[float, pd.Series],
+    rt: Union[float, pd.Series],
     rw: float,
-    r: float,
+    a: float = 0.81,
+    m: float = 2.0,
+    n: float = 2.0,
+ 
 ) -> Union[float, pd.Series]:
     """
     Calculate the water saturation using Archie's equation.
@@ -148,18 +198,20 @@ def archie_saturation(
 
     Parameters
     ----------
+    phi: Union[float, pd.Series]
+        Porosity (fraction).
+    rt: float
+        Resistivity of the formation (ohm-meter).
+    rw: float
+        Resistivity of water (ohm-meter).
     a: float
         Archie constant (dimensionless).
     m: float
         Cementation exponent (dimensionless).
     n: float
         Saturation exponent (dimensionless).
-    phi: Union[float, pd.Series]
-        Porosity (fraction).
-    rw: float
-        Resistivity of water (ohm-meter).
-    r: float
-        Resistivity of the formation (ohm-meter).
+
+
 
     Returns
     -------
@@ -176,8 +228,8 @@ def archie_saturation(
     elif isinstance(phi, float) and (phi <= 0 or phi >= 1):
         raise ValueError("Porosity values must be between 0 and 1.")
 
-    if rw <= 0 or r <= 0:
+    if rw <= 0 or rt <= 0:
         raise ValueError("Resistivity values must be positive.")
 
-    Sw = ((a * rw) / (r * phi ** m)) ** (1 / n)
+    Sw = ((a * rw) / (rt * phi ** m)) ** (1 / n)
     return Sw

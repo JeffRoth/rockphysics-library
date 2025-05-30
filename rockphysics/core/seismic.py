@@ -110,8 +110,6 @@ def create_depth_time_interpolators(
         fill_value="extrapolate",
         assume_sorted=True
     )
-
-
     return depth_to_time_func, time_to_depth_func
 
 

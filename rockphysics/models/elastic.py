@@ -86,8 +86,8 @@ def bulk_modulus(
     Returns:
         pd.Series: Bulk modulus of the rock.
     """
-    p_velocity = p_velocity/1000  # Convert to km/s
-    s_velocity = s_velocity/1000  # Convert to km/s
+    p_velocity = p_velocity
+    s_velocity = s_velocity
 
     bulk_modulus = density * (p_velocity ** 2 - 4/3 * s_velocity ** 2)
     return bulk_modulus
@@ -108,7 +108,7 @@ def shear_modulus(
     Returns:
         pd.Series: Bulk modulus of the rock.
     """
-    s_velocity = s_velocity/1000  # Convert to km/s
+    s_velocity = s_velocity
 
     shear_modulus = density * s_velocity ** 2
     return shear_modulus

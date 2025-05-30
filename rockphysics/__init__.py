@@ -21,8 +21,8 @@ from .models.fluid import (
     water_bulk_modulus, oil_bulk_modulus, gas_bulk_modulus
 )
 from .core.petrophysics import (
-    density_porosity, sonic_porosity,
-    vshale_from_GR, vclay_from_neutron_density,
+    density_porosity, sonic_porosity_wyllie,
+    vshale_from_GR, vshale_from_SP, vclay_from_neutron_density,
     archie_saturation
 )
 from .utils.general_utils import (
@@ -63,7 +63,7 @@ __all__ = [
     "oil_bulk_modulus",
     "gas_bulk_modulus",
     "density_porosity",
-    "sonic_porosity",
+    "sonic_porosity_wyllie",
     "archie_saturation",
     "psi_to_mpa",
     "mpa_to_psi",
@@ -75,6 +75,7 @@ __all__ = [
     "vp_from_dt",
     "vs_from_dts",
     "vshale_from_GR",
+    "vshale_from_SP",
     "vclay_from_neutron_density",
     "plot_logs",
     "interactive_vclay_crossplot",

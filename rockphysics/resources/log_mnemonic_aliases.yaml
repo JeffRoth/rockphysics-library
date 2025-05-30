@@ -104,6 +104,7 @@ LOG_MNEMONIC_ALIASES:
     - VCL_TIME
     - VCLW
     - VCLA
+    - VCLAY_ND
   REFLECTION_COEFFICIENT:
     - RC_TIME
     - RC
@@ -127,27 +128,18 @@ LOG_MNEMONIC_ALIASES:
     - TENS
     - TEN
     - TENS_AVG
-  EFFECTIVE_POROSITY:
-    - PHIE
-    - POTE
-    - PORE
+  POROSITY:
+    - POROSITY
     - POR
-    - EFFP
-    - PHIA
     - PHI
-  TOTAL_POROSITY:
     - PHIT
-    - POTT
-    - TPOR
-    - TNPH
-    - PTOR
-  DENSITY_POROSITY:
-    - DPHI
+    - PHIE
     - PHID
     - DPOR
-    - PORL
     - PORD
     - RHOP
+    - DTPHI
+    - PHIS
   WATER_SATURATION:
     - SW
     - SWT
