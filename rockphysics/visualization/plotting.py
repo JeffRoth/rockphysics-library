@@ -387,3 +387,131 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
     fig.suptitle(f"Log Plot (Index: {log_data.data.index.name})", fontsize=12, y=0.98) 
     plt.tight_layout(rect=[0, 0, 1, 0.96]) 
     plt.show()
+
+
+def crossplot(log_data: LogData, x_var, y_var, color, depth_top, depth_bottom):
+    """
+    Plots a crossplot of two logs.
+
+    Args:
+        log_data (LogData): The LogData object containing the well logs.
+        min_val_display (float or 'auto'): Minimum value of the y-axis (depth or time) for display.
+                                            'auto' starts at the first valid index of the data.
+        max_val_display (float or 'auto'): Maximum value of the y-axis (depth or time) for display.
+                                            'auto' ends at the last valid index of the data.
+        *tracks (str): Comma-separated list of log curve names to display.
+            
+    EXAMPLE USAGE:
+        plot_logs(my_log_data, 'auto', 'auto', 'CALI', 'GR', 'RESDEP')
+        plot_logs(my_time_log_data, 0, 500, 'GR_time', 'RHOB_time', 'RC_TIME')
+    """
+
+    dataframe = log_data.data # Access the internal DataFrame
+
+    # Attempt to import and instantiate LogNomenclature for log type styling
+    log_nomenclature_instance = None # This will hold the LogNomenclature instance
+    try:
+        from ..utils import nomenclature as nomenclature_py_module # Import the .py file as a module object
+
+        if hasattr(nomenclature_py_module, 'LogNomenclature'):
+            NomenclatureClass = getattr(nomenclature_py_module, 'LogNomenclature')
+            if callable(NomenclatureClass):
+                try:
+                    instance = NomenclatureClass() # Instantiate
+                    if hasattr(instance, 'get_log_type') and callable(instance.get_log_type):
+                        log_nomenclature_instance = instance # Store the usable instance
+                        print("LogNomenclature instance created successfully. Will use it for type-based styling.")
+                    else:
+                        print("Warning: LogNomenclature class instantiated, but its 'get_log_type' method is missing or not callable. Proceeding without type-based styling.")
+                except Exception as e_init:
+                    print(f"Warning: Error initializing LogNomenclature class: {e_init}. Proceeding without type-based styling.")
+            else:
+                print("Warning: 'LogNomenclature' found in nomenclature module, but it's not a callable class. Proceeding without type-based styling.")
+        else:
+            print("Warning: Nomenclature module loaded, but 'LogNomenclature' class not found within it. Proceeding without type-based styling.")
+
+    except ImportError:
+        print("Warning: Nomenclature module (rockphysics.utils.nomenclature) not found. "
+              "Plotting will rely solely on 'plot_config.yaml' mnemonic settings and internal defaults.")
+    except Exception as e:
+        print(f"Warning: General error during nomenclature setup: {e}. "
+              "Plotting will rely solely on 'plot_config.yaml' mnemonic settings and internal defaults.")
+
+    # Configuration for log display (colors, scales, etc.)
+    track_title_size = 8 
+    tick_label_size = 7  
+    y_axis_label_size = 9 
+
+    # These will be primary fallbacks, ideally overridden by plot_config.yaml "defaults"
+    default_vsh_fill_cutoff = 0.5
+    default_vsh_sand_fill_color = 'yellow'
+    default_vsh_shale_fill_color = 'grey'
+    default_synthetic_fill_color = 'black'
+    default_flag_fill_color = 'red'
+    default_flag_fill_alpha = 0.3
+    default_log_color = 'blue'
+    default_log_line_width = 0.7
+
+    log_type_display_settings = {}
+    default_display_settings = {}
+    config_defaults = {}
+    
+    try:
+        import rockphysics
+        package_root = os.path.dirname(os.path.dirname(rockphysics.__file__)) 
+        config_path_attempt1 = os.path.join(package_root, "resources/plot_config.yaml")
+
+        current_file_dir = os.path.dirname(os.path.abspath(__file__))
+        config_path_attempt2 = os.path.join(current_file_dir, "..", "..", "/resources/plot_config.yaml") 
+        config_path_attempt3 = os.path.join(current_file_dir, "..", "resources/plot_config.yaml") 
+
+        config_path = None
+        if os.path.exists(config_path_attempt1):
+            config_path = config_path_attempt1
+        elif os.path.exists(config_path_attempt2):
+            config_path = config_path_attempt2
+        elif os.path.exists(config_path_attempt3):
+            config_path = config_path_attempt3
+        
+        if config_path:
+            with open(config_path, "r") as f:
+                config_data = yaml.safe_load(f)
+            log_type_display_settings = config_data.get("log_display_settings", {})
+            default_display_settings = config_data.get("defaults", {})
+            config_defaults = config_data.get("defaults", {})
+            print(f"Loaded display settings from: {config_path}")
+        else:
+            print(f"Warning: Configuration file 'plot_config.yaml' not found. Using default plotting parameters.")
+            
+    except ImportError:
+        print("Warning: 'rockphysics' package not found for robust config path detection. Trying relative paths for 'config.yaml'.")
+    except FileNotFoundError:
+        print(f"Warning: Configuration file 'plot_config.yaml' not found. Using default plotting parameters.")
+    except Exception as e:
+        print(f"Warning: Error loading 'plot_config.yaml': {e}. Using default plotting parameters.")
+
+    # Apply global defaults from config file, falling back to hardcoded defaults
+    default_log_color = config_defaults.get('default_log_color', default_log_color)
+    log_line_width = config_defaults.get('log_line_width', default_log_line_width)
+    track_title_size = config_defaults.get('track_title_size', track_title_size)
+    tick_label_size = config_defaults.get('tick_label_size', tick_label_size)
+    y_axis_label_size = config_defaults.get('y_axis_label_size', y_axis_label_size)
+    default_vsh_fill_cutoff = config_defaults.get('vsh_fill_cutoff', default_vsh_fill_cutoff)
+    default_vsh_sand_fill_color = config_defaults.get('vsh_sand_fill_color', default_vsh_sand_fill_color)
+    default_vsh_shale_fill_color = config_defaults.get('vsh_shale_fill_color', default_vsh_shale_fill_color)
+    default_synthetic_fill_color = config_defaults.get('synthetic_fill_color', default_synthetic_fill_color)
+    default_flag_fill_color = config_defaults.get('flag_fill_color', default_flag_fill_color)
+    default_flag_fill_alpha = config_defaults.get('flag_fill_alpha', default_flag_fill_alpha)
+
+    # filter dataframe by depth range
+    df_filtered = dataframe[(dataframe.index >= depth_top) & (dataframe.index <= depth_bottom)]
+    if df_filtered.empty:
+        print(f"No data available between depths {depth_top} and {depth_bottom}.")
+        return
+
+    plt.scatter(x=x_var, y=y_var, data=df_filtered, c=color)
+    plt.xlabel(x_var)
+    plt.ylabel(y_var)
+    plt.title(f"Crossplot: {y_var} vs {x_var}", fontsize=12, y=0.98)
+    plt.colorbar(label=color)  # Add colorbar for the color variable
+    plt.show()

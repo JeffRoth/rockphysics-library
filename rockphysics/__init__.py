@@ -30,7 +30,7 @@ from .utils.general_utils import (
     celsius_to_fahrenheit, fahrenheit_to_celsius, 
     validate_log_data, vp_from_dt, vs_from_dts
 )
-from .visualization.plotting import plot_logs
+from .visualization.plotting import plot_logs, crossplot
 from .visualization.interactive import interactive_vclay_crossplot, calculate_vclay_neutron_density_xplot
 
 __all__ = [
@@ -78,6 +78,7 @@ __all__ = [
     "vshale_from_SP",
     "vclay_from_neutron_density",
     "plot_logs",
+    "crossplot",
     "interactive_vclay_crossplot",
     "calculate_vclay_neutron_density_xplot"
 ]

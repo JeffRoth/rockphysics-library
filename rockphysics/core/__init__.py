@@ -13,7 +13,7 @@ from .petrophysics import (
 
 __all__ = [
     "LogData",
-    "load_checkshot_data", "create_depth_time_interpolators", "resample_log_to_time_domain", "convert_well_logs_to_time_domain"
+    "load_checkshot_data", "create_depth_time_interpolators", "resample_log_to_time_domain", "convert_well_logs_to_time_domain",
     "calculate_reflectivity_series", "generate_ricker_wavelet", "convolve_traces", 
     "density_porosity", "sonic_porosity_wyllie",
     "vshale_from_GR", "vshale_from_SP", "vclay_from_neutron_density", 

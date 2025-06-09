@@ -1,6 +1,40 @@
 import pandas as pd
 from typing import Union
 
+def vshale_from_GR(gr_log: pd.Series, gr_clean: float, gr_shale: float) -> pd.Series:
+    """
+    Calculate the volume of shale (VSH) from the Gamma Ray (GR) log
+    using a linear interpolation between clean sand and pure shale cutoffs.
+
+    Reference: Schlumberger. (1989 and newer editions). Log Interpretation Principles/Applications
+
+    Args:
+        gr_log (pd.Series): Gamma Ray log.
+        gr_clean (float): GR value for clean sand (0% VCLAY).
+        gr_shale (float): GR value for pure shale (100% VCLAY).
+
+    Returns:
+        pd.Series: Volume of shale (VSH) log.
+    """
+    return (gr_log - gr_clean) / (gr_shale - gr_clean)
+
+
+def vshale_from_SP(sp_log: pd.Series, sp_clean: float, sp_shale: float) -> pd.Series:
+    """
+    Calculate the volume of shale (VSH) from the Spontaneous Potential (SP) log
+    using a linear interpolation between clean sand and pure shale cutoffs.
+
+    Args:
+        sp_log (pd.Series): Spontaneous Potential log.
+        sp_clean (float): SP value for clean sand (0% VCLAY).
+        sp_shale (float): SP value for pure shale (100% VCLAY).
+
+    Returns:
+        pd.Series: Volume of shale (VSH) log.
+    """
+    return (sp_shale - sp_log) / (sp_shale - sp_clean)
+
+
 def density_porosity(
     bulk_density: pd.Series,
     matrix_density: float = 2.65,
@@ -74,11 +108,7 @@ def sonic_porosity_rhg(
     c: float = 0.67
     ) -> pd.Series:
     """    Calculate porosity from sonic transit time (delta_t)
-    using the RHG (Reuss-Hill-Greenberg) equation.
-    Reference: Greenberg, M. L., & Castagna, J. P. (1992).
-    Shear-wave velocity estimation in porous rocks: A new look at the
-    relation between compressional and shear velocities.
-    Geophysics, 57(6), 1016-1025.
+    using the RHG (Haymer-Hunt-Gardner) equation.
     
     Args:
         delta_t (pd.Series): Sonic transit time log, with units
@@ -98,39 +128,6 @@ def sonic_porosity_rhg(
     # Calculate porosity using the RHG equation
     porosity = c * (delta_t - delta_t_matrix) / delta_t
     return porosity.clip(lower=0, upper=1)  # Ensure porosity is within [0, 1]
-
-
-def vshale_from_GR(gr_log: pd.Series, gr_clean: float, gr_shale: float) -> pd.Series:
-    """
-    Calculate the volume of shale (VSH) from the Gamma Ray (GR) log
-    using a linear interpolation between clean sand and pure shale cutoffs.
-
-    Reference: Schlumberger. (1989 and newer editions). Log Interpretation Principles/Applications
-
-    Args:
-        gr_log (pd.Series): Gamma Ray log.
-        gr_clean (float): GR value for clean sand (0% VCLAY).
-        gr_shale (float): GR value for pure shale (100% VCLAY).
-
-    Returns:
-        pd.Series: Volume of shale (VSH) log.
-    """
-    return (gr_log - gr_clean) / (gr_shale - gr_clean)
-
-def vshale_from_SP(sp_log: pd.Series, sp_clean: float, sp_shale: float) -> pd.Series:
-    """
-    Calculate the volume of shale (VSH) from the Spontaneous Potential (SP) log
-    using a linear interpolation between clean sand and pure shale cutoffs.
-
-    Args:
-        sp_log (pd.Series): Spontaneous Potential log.
-        sp_clean (float): SP value for clean sand (0% VCLAY).
-        sp_shale (float): SP value for pure shale (100% VCLAY).
-
-    Returns:
-        pd.Series: Volume of shale (VSH) log.
-    """
-    return (sp_shale - sp_log) / (sp_shale - sp_clean)
 
 
 def vclay_from_neutron_density(
@@ -211,8 +208,6 @@ def archie_saturation(
     n: float
         Saturation exponent (dimensionless).
 
-
-
     Returns
     -------
     Sw: Union[float, pd.Series]
@@ -231,5 +226,7 @@ def archie_saturation(
     if rw <= 0 or rt <= 0:
         raise ValueError("Resistivity values must be positive.")
 
-    Sw = ((a * rw) / (rt * phi ** m)) ** (1 / n)
+    F = a / phi ** m  # Formation factor
+    
+    Sw = (F * rw) / rt 
     return Sw
