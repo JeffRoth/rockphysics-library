@@ -1,6 +1,7 @@
 # rock-physics: A Python Library for Rock Physics Analysis
 
-rock-physics is a Python library designed to provide tools and utilities for common rock physics calculations, well log analysis, and basic seismic modeling workflows.
+rockphysics_library is a Python library designed to provide tools and utilities for common rock physics calculations, well log analysis,
+and basic seismic modeling workflows.
 
 ## Core Features
 
@@ -72,7 +73,7 @@ bash:
 
 Ensure the rockphysics_library directory (or the directory containing the rockphysics package) is in your PYTHONPATH, or install it locally using pip:
 
-`pip install .`
+`python3 -m pip install .`
 
 ## Dependencies
 
