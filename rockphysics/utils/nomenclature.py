@@ -27,21 +27,69 @@ class LogNomenclature:
         except Exception as e:
             print(f"An unexpected error occurred while loading alias file {filepath}: {e}")
             return {}
+        
+    def set_log_type(self, mnemonic: str, canonical_type: str):
+        """
+        Manually sets or overrides the canonical type for a specific mnemonic.
+
+        This is useful for correcting misclassifications or defining types for
+        non-standard mnemonics. This change only affects the current instance.
+
+        Args:
+            mnemonic (str): The log mnemonic to assign (e.g., 'MY_CUSTOM_GR').
+            canonical_type (str): The canonical type to assign it to (e.g., 'GAMMA_RAY').
+        """
+        mnemonic_upper = str(mnemonic).upper()
+        canonical_type_upper = str(canonical_type).upper()
+
+        # Get the list of aliases for the canonical type, or an empty list if it's new
+        aliases = self.alias_map.get(canonical_type_upper, [])
+        
+        # Add the new mnemonic to the list if it's not already there
+        if mnemonic_upper not in aliases:
+            aliases.append(mnemonic_upper)
+        
+        # Update the map with the modified (or new) list of aliases
+        self.alias_map[canonical_type_upper] = aliases
 
     def get_log_type(self, mnemonic: str) -> str:
         """
-        Finds the canonical log name for a given mnemonic.
-        Returns the canonical name if found, otherwise the original mnemonic (uppercased).
+        Finds the canonical log type for a given mnemonic by finding the longest
+        matching prefix alias.
+
+        This method checks for all possible prefix matches and returns the one
+        corresponding to the longest alias, ensuring that 'DTS' matches 'S_SONIC'
+        over 'P_SONIC' (which matches 'DT').
+
+        Args:
+            mnemonic (str): The log mnemonic to classify (e.g., 'DTS').
+
+        Returns:
+            str: The canonical log type (e.g., 'S_SONIC') if a match is found,
+                 otherwise the original mnemonic in uppercase.
         """
-        if not self.alias_map: # No aliases loaded or loading failed
+        if not self.alias_map:
             return str(mnemonic).upper()
 
         mnemonic_upper = str(mnemonic).upper()
+        
+        best_match_type = None
+        max_match_len = 0
+
+        # Find the best (longest) matching alias across all canonical types
         for canonical_name, aliases in self.alias_map.items():
-            # Ensure all aliases in the map are also uppercase and strings for consistent comparison
-            if mnemonic_upper in [str(alias).upper() for alias in aliases if alias is not None]:
-                return canonical_name
-        return mnemonic_upper # Fallback to original mnemonic (uppercased)
+            for alias in aliases:
+                if mnemonic_upper.startswith(alias):
+                    # If this match is longer than the previous best, it becomes the new best.
+                    if len(alias) > max_match_len:
+                        max_match_len = len(alias)
+                        best_match_type = canonical_name
+        
+        # Return the best match found, or the original mnemonic if no match was made.
+        if best_match_type:
+            return best_match_type
+        else:
+            return mnemonic_upper
 
     def get_log_type_map(self, curve_mnemonics: list[str]) -> dict[str, str]:
         """

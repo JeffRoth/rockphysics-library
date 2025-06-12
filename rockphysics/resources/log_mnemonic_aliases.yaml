@@ -32,6 +32,7 @@ LOG_MNEMONIC_ALIASES:
     - DT2P
     - DT2S
   S_SONIC:
+    - DTS
     - DT2S
     - DTSH
     - DTSM
@@ -42,11 +43,9 @@ LOG_MNEMONIC_ALIASES:
     - DT_SHEAR
   P_VELOCITY:
     - VP
-    - VP_TIME
     - VELP
   S_VELOCITY:
     - VS
-    - VS_TIME
     - VELS
   GAMMA_RAY:
     - GR
@@ -94,13 +93,10 @@ LOG_MNEMONIC_ALIASES:
     - FLAG_TIME
   VOLUME_SHALE:
     - VSH
-    - VSH_TIME
     - VSHL
     - VSHGR
     - VSHN
     - VSHD
-    - VSH_GR
-    - VSH_SP
   VOLUME_CLAY:
     - VCL
     - VCL_TIME
