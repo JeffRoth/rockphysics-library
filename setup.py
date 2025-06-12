@@ -29,5 +29,7 @@ setup(
         'pyyaml',
         'scipy',
         'lasio',
+        'pint',
+        'ipywidgets',
     ],
 )
