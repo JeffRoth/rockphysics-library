@@ -1,4 +1,4 @@
-# from .log_data import LogData
+from .project import Project
 from .well import Well, TimeDomainAccessor
 from .seismic import (
     load_checkshot_data, create_depth_time_interpolators, resample_log_to_time, 
@@ -13,6 +13,7 @@ from .petrophysics import (
 
 
 __all__ = [
+    "Project",
     "Well", "TimeDomainAccessor",
     "load_checkshot_data", "create_depth_time_interpolators", "resample_log_to_time", "convert_well_to_time",
     "calculate_reflectivity", "generate_ricker_wavelet", "create_synthetic", 

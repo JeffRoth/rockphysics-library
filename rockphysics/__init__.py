@@ -3,7 +3,7 @@ This is the rockphysics library, providing tools for rock physics
 calculations and analysis of well log data.
 """
 
-from .core import Well, TimeDomainAccessor
+from .core import Well, TimeDomainAccessor, Project
 from .core.seismic import (
     load_checkshot_data, create_depth_time_interpolators, resample_log_to_time,
     convert_well_to_time, calculate_reflectivity,
@@ -29,10 +29,14 @@ from .utils.general_utils import (
     celsius_to_fahrenheit, fahrenheit_to_celsius, 
     validate_log_data, vp_from_dt, vs_from_dts
 )
+from .geomechanics.porepressure import (
+    calculate_pore_pressure_eaton
+)
 from .visualization.plotting import plot_logs, crossplot
 from .visualization.interactive import interactive_vclay_crossplot, calculate_vclay_neutron_density_xplot
 
 __all__ = [
+    "Project"
     "Well",
     "TimeDomainAccessor",
     "LogNomenclature",
@@ -79,6 +83,7 @@ __all__ = [
     "vshale_from_SP",
     "vclay_from_neutron_density",
     "archie_saturation",
+    "calculate_pore_pressure_eaton",
     "plot_logs",
     "crossplot",
     "interactive_vclay_crossplot",

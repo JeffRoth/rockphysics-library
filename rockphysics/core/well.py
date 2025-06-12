@@ -78,9 +78,13 @@ class Well:
             self._time_domain = TimeDomainAccessor(self)
         return self._time_domain
 
+    @property
+    def uwi(self) -> Optional[str]:
+        """Returns the Unique Well Identifier (UWI) of the well."""
+        return self.well.get('UWI', {}).get('value')
+
     def add_top(self, name: str, depth: float):
         """Adds a new formation top to the well."""
-        # Adding to a dictionary is much simpler
         self.tops[name] = depth
 
     def add_tops_from_df(self, tops_df: pd.DataFrame, name_col: str, depth_col: str):
