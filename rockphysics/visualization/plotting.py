@@ -3,10 +3,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import yaml
 import os
-from typing import Optional, Callable
-from ..core import LogData # Use relative import
+from typing import Optional, Callable, List
+from ..core.well import Well
+# from ..core import LogData # Use relative import
 
-def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
+def plot_logs(log_data: pd.DataFrame, min_val_display, max_val_display, *tracks):
     """
     Plots an arbitrary number of well logs from a single LogData object.
 
@@ -23,7 +24,8 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
         plot_logs(my_time_log_data, 0, 500, 'GR_time', 'RHOB_time', 'RC_TIME')
     """
 
-    dataframe = log_data.data # Access the internal DataFrame
+    # dataframe = log_data.data # Access the internal DataFrame
+    dataframe = log_data
 
     # Attempt to import and instantiate LogNomenclature for log type styling
     log_nomenclature_instance = None # This will hold the LogNomenclature instance
@@ -377,6 +379,16 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
                     interpolate=False
                 )
 
+            if log_type == 'WATER_SATURATION':
+                ax.fill_betweenx(
+                    dataframe.index,
+                    0,  # Fill from the left edge of the track
+                    log_series, # Fill to the log
+                    facecolor='blue',
+                    interpolate=False
+                )
+
+
         # Set y-axis label only for the first track
         if i == 0:
             ax.set_ylabel(y_label, fontsize=y_axis_label_size)
@@ -384,12 +396,12 @@ def plot_logs(log_data: LogData, min_val_display, max_val_display, *tracks):
             ax.tick_params(axis='y', labelleft=False)
 
 
-    fig.suptitle(f"Log Plot (Index: {log_data.data.index.name})", fontsize=12, y=0.98) 
+    fig.suptitle(f"Log Plot (Index: {log_data.index.name})", fontsize=12, y=0.98) 
     plt.tight_layout(rect=[0, 0, 1, 0.96]) 
     plt.show()
 
 
-def crossplot(log_data: LogData, x_var, y_var, color, depth_top, depth_bottom):
+def crossplot(log_data: pd.DataFrame, x_var, y_var, color, depth_top, depth_bottom):
     """
     Plots a crossplot of two logs.
 
@@ -406,7 +418,8 @@ def crossplot(log_data: LogData, x_var, y_var, color, depth_top, depth_bottom):
         plot_logs(my_time_log_data, 0, 500, 'GR_time', 'RHOB_time', 'RC_TIME')
     """
 
-    dataframe = log_data.data # Access the internal DataFrame
+    # dataframe = log_data.data # Access the internal DataFrame
+    dataframe = log_data
 
     # Attempt to import and instantiate LogNomenclature for log type styling
     log_nomenclature_instance = None # This will hold the LogNomenclature instance

@@ -3,14 +3,14 @@ This is the rockphysics library, providing tools for rock physics
 calculations and analysis of well log data.
 """
 
-from .core import LogData
+from .core import Well, TimeDomainAccessor
 from .core.seismic import (
-    load_checkshot_data, create_depth_time_interpolators, resample_log_to_time_domain,
-    convert_well_logs_to_time_domain, calculate_reflectivity_series,
-    generate_ricker_wavelet, convolve_traces
+    load_checkshot_data, create_depth_time_interpolators, resample_log_to_time,
+    convert_well_to_time, calculate_reflectivity,
+    generate_ricker_wavelet, create_synthetic
 )
 from .utils.nomenclature import LogNomenclature
-from .io import load_las_file, save_las_file
+from .io import load_tops, save_well_to_las, load_well_from_las
 from .models.elastic import (
     dry_modulus, gassmann, bulk_modulus, shear_modulus, voigt_average, 
     reuss_average, greenberg_castagna, hill_average, p_wave_velocity, s_wave_velocity,
@@ -21,9 +21,8 @@ from .models.fluid import (
     water_bulk_modulus, oil_bulk_modulus, gas_bulk_modulus
 )
 from .core.petrophysics import (
-    density_porosity, sonic_porosity_wyllie,
-    vshale_from_GR, vshale_from_SP, vclay_from_neutron_density,
-    archie_saturation
+    density_porosity, sonic_porosity_wyllie, sonic_porosity_rhg,
+    vshale_from_GR, vshale_from_SP, vclay_from_neutron_density, archie_saturation
 )
 from .utils.general_utils import (
     psi_to_mpa, mpa_to_psi, psi_to_kpa, kpa_to_psi, 
@@ -34,17 +33,19 @@ from .visualization.plotting import plot_logs, crossplot
 from .visualization.interactive import interactive_vclay_crossplot, calculate_vclay_neutron_density_xplot
 
 __all__ = [
-    "LogData",
+    "Well",
+    "TimeDomainAccessor",
     "LogNomenclature",
     "load_checkshot_data",
     "create_depth_time_interpolators",
-    "resample_log_to_time_domain",
-    "convert_well_logs_to_time_domain",
-    "calculate_reflectivity_series",
+    "resample_log_to_time",
+    "convert_well_to_time",
+    "calculate_reflectivity",
     "generate_ricker_wavelet",
-    "convolve_traces",
-    "load_las_file",
-    "save_las_file",
+    "create_synthetic",
+    "load_tops",
+    "load_well_from_las",
+    "save_well_to_las",
     "dry_modulus",
     "gassmann",
     "bulk_modulus",
@@ -64,7 +65,7 @@ __all__ = [
     "gas_bulk_modulus",
     "density_porosity",
     "sonic_porosity_wyllie",
-    "archie_saturation",
+    "sonic_porosity_rhg",
     "psi_to_mpa",
     "mpa_to_psi",
     "psi_to_kpa",
@@ -77,6 +78,7 @@ __all__ = [
     "vshale_from_GR",
     "vshale_from_SP",
     "vclay_from_neutron_density",
+    "archie_saturation",
     "plot_logs",
     "crossplot",
     "interactive_vclay_crossplot",

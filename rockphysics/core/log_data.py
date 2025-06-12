@@ -26,7 +26,7 @@ class LogData:
         """
         if index_name:
             name_lower = index_name.lower()
-            if "depth" or "dept" in name_lower:
+            if "depth" in name_lower or "dept" in name_lower:
                 return "depth"
             elif "time" in name_lower or "twt" in name_lower:
                 return "time"

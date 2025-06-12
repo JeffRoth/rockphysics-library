@@ -1,6 +1,6 @@
 import lasio
 import pandas as pd
-from ..core import LogData # Use relative import
+# from ..core import LogData # Use relative import
 
 def load_las_file(filepath: str) -> LogData:
     """

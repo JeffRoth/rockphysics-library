@@ -99,6 +99,8 @@ LOG_MNEMONIC_ALIASES:
     - VSHGR
     - VSHN
     - VSHD
+    - VSH_GR
+    - VSH_SP
   VOLUME_CLAY:
     - VCL
     - VCL_TIME
@@ -140,6 +142,7 @@ LOG_MNEMONIC_ALIASES:
     - RHOP
     - DTPHI
     - PHIS
+    - PHIRHG
   WATER_SATURATION:
     - SW
     - SWT
@@ -147,6 +150,8 @@ LOG_MNEMONIC_ALIASES:
     - WS
     - SATW
     - SW_EFF
+    - SW_ARCHIE
+    - SAT_ARCHIE
   PERMEABILITY:
     - PERM
     - K
