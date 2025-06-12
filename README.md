@@ -5,10 +5,10 @@ rock-physics is a Python library designed to provide tools and utilities for com
 ## Core Features
 
 * **Well Log Data Handling:**
-    * Load LAS (Log ASCII Standard) files into structured `Well` and `LogData` objects.
+    * Load LAS (Log ASCII Standard) files into structured `Well` object.
     * Easy access to log curves and metadata.
 * **Petrophysical Calculations:**
-    * **Porosity:** Density porosity, Sonic porosity (Wyllie).
+    * **Porosity:** Density porosity, Sonic porosity (Wyllie & Raymer-Hunt-Gardner).
     * **Volume of Shale ($V_{shale}$):** Linear method from Gamma Ray.
     * **Water Saturation ($S_w$):** Archie's equation (references for Simandoux and other shaly sand models considered for future expansion).
     * (Future: Other petrophysical parameters and models).
@@ -31,31 +31,34 @@ The library is organized into several key modules:
 
 ```
 rockphysics_library/
-├── rock-physics/             # Main library package
+├── rock-physics/                     # Main library package
 │   ├── init.py
-│   ├── core/                 # Core data objects and calculations
+│   ├── core/                         # Core data objects and calculations
 │   │   ├── init.py
-│   │   ├── log_data.py       # LogData class (user-defined)
-│   │   ├── petrophysics.py   # Porosity, Vshale, Sw calculations
-│   │   └── seismic.py        # TD conversion, reflectivity, wavelets, synthetics
-│   ├── io/                   # Input/Output operations
+│   │   ├── petrophysics.py           # Porosity, Vshale, Sw calculations
+│   │   ├── seismic.py                # TD conversion, reflectivity, wavelets, synthetics
+│   │   └── well.py                   # Well class
+│   ├── io/                           # Input/Output operations
 │   │   ├── init.py
-│   │   └── las_io.py         # Reads LAS files into Well objects and saves them to las files
-│   ├── models/               # (Planned) Specific rock physics models
+│   │   ├── tops_reader.py            # Reads TOPS files into Well objects
+│   │   └── well_io.py                # Reads LAS files into Well objects and saves them to las files
+│   ├── models/                       # Specific rock physics models
 │   │   ├── init.py
-│   │   ├── elastic.py        # Elastic calculations
-│   │   └── fluid.py          # Fluid calculations
-│   ├── visualization/        # Plotting utilities
+│   │   ├── elastic.py                # Elastic calculations
+│   │   └── fluid.py                  # Fluid calculations
+│   ├── resources/                    # Configuration files and data
+│   │   ├── log_mnemonic_aliases.yaml # log mnemonics for determining log types
+│   │   ├── plot_config.yaml          # configuration for plotting
+│   │   └── units.yaml                # units
+│   ├── utils/                        # General utility functions
 │   │   ├── init.py
-│   │   └── plotting.py       # Log plotting functions
-│   └── utils/                # General utility functions
+│   │   ├── general_utils.py          # General utility functions (e.g., unit conversions)
+│   │   └── nomenclature.py           # Defines LogNomenclature class for classifying log types
+│   └── visualization/                # Plotting utilities
 │       ├── init.py
-│       ├── general_utils.py  # General utility functions (e.g., unit conversions)
-│       └── nomenclature.py   # Defines LogNomenclature class for classifying log types
-├── plot_config.yaml          # configuration for plotting
-├── log_mnemonic_aliases.yaml # log mnemonics for determining log types
-├── examples/                 # (To be added) Jupyter notebooks and scripts
-├── tests/                    # (To be added) Unit tests
+│       └── plotting.py               # Log plotting functions
+├── examples/                         # (To be added) Jupyter notebooks and scripts
+├── tests/                            # (To be added) Unit tests
 └── README.md
 ```
 
@@ -71,13 +74,14 @@ Ensure the rockphysics_library directory (or the directory containing the rockph
 
 `pip install .`
 
-Dependencies
-Python (3.7+)
-NumPy
-Pandas
-SciPy (for interpolation and signal processing)
-Matplotlib (for plotting)
-Lasio (for reading LAS files)
+## Dependencies
+
+Python (3.7+)  
+NumPy  
+Pandas  
+SciPy (for interpolation and signal processing)  
+Matplotlib (for plotting)  
+Lasio (for reading LAS files)  
 PyYAML (for loading configuration files)
 
 You can install these dependencies using pip:
