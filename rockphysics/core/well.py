@@ -66,7 +66,7 @@ class Well:
         self.version = {h.mnemonic: {'unit': h.unit, 'value': h.value, 'descr': h.descr} for h in las_file.version}
         self.well = {h.mnemonic: {'unit': h.unit, 'value': h.value, 'descr': h.descr} for h in las_file.well}
         self.parameter_info = {p.mnemonic: {'unit': p.unit, 'value': p.value, 'descr': p.descr} for p in las_file.params}
-        self.curve_info = {c.mnemonic: {'unit': c.unit, 'descr': c.descr} for c in las_file.curves}
+        self.log_info = {c.mnemonic: {'unit': c.unit, 'descr': c.descr} for c in las_file.curves}
 
         self._time_domain = None
 
