@@ -37,8 +37,12 @@ rockphysics_library/
 │   ├── core/                         # Core data objects and calculations
 │   │   ├── init.py
 │   │   ├── petrophysics.py           # Porosity, Vshale, Sw calculations
+│   │   ├── project.py                # Project class
 │   │   ├── seismic.py                # TD conversion, reflectivity, wavelets, synthetics
 │   │   └── well.py                   # Well class
+│   ├── geomechanics/                 # Geomechanical functions
+│   │   ├── init.py
+│   │   └── porepressure.py           # Pore pressure calculation
 │   ├── io/                           # Input/Output operations
 │   │   ├── init.py
 │   │   ├── tops_reader.py            # Reads TOPS files into Well objects

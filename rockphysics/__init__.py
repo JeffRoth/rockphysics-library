@@ -36,7 +36,7 @@ from .visualization.plotting import plot_logs, crossplot
 from .visualization.interactive import interactive_vclay_crossplot, calculate_vclay_neutron_density_xplot
 
 __all__ = [
-    "Project"
+    "Project",
     "Well",
     "TimeDomainAccessor",
     "LogNomenclature",
