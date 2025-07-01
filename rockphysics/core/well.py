@@ -137,6 +137,31 @@ class Well:
         else:
             return pd.Series(self.logs.index)
 
+    def get_interval(self, top_name: str, base_name: str) -> pd.DataFrame:
+        """
+        Returns a slice of the log dataframe between two formation tops.
+
+        Args:
+            top_name (str): The name of the formation top defining the interval start.
+            base_name (str): The name of the formation top defining the interval base.
+
+        Returns:
+            pd.DataFrame: A slice of the well's log data for the specified interval.
+        
+        Raises:
+            ValueError: If one or both formation tops are not found in the well,
+                        or if the top depth is not less than the base depth.
+        """
+        if top_name not in self.tops or base_name not in self.tops:
+            raise ValueError(f"One or both tops ('{top_name}', '{base_name}') not found in well '{self.name}'.")
+        
+        top_depth = self.tops[top_name]
+        base_depth = self.tops[base_name]
+
+        if top_depth >= base_depth:
+            raise ValueError(f"Top depth ({top_depth}) must be less than base depth ({base_depth}).")
+
+        return self.logs[(self.logs.index >= top_depth) & (self.logs.index < base_depth)]
 
     def get_intervals(self) -> List[Tuple[str, float, str, float]]:
         """

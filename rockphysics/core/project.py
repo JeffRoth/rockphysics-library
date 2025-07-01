@@ -8,7 +8,7 @@ for managing a collection of Well objects.
 import pandas as pd
 import matplotlib.pyplot as plt
 from typing import Dict, List, Optional, Callable
-
+ 
 from .well import Well
 
 class Project:
@@ -21,31 +21,33 @@ class Project:
             name (str): The name of the project or study area.
             wells (Optional[List[Well]]): An optional list of Well objects to initialize with.
         """
-        self.name = name
-        self.wells: Dict[str, 'Well'] = {}
+        self.name: str = name
+        self.wells: Dict[str, Well] = {}
         if wells:
             for well in wells:
                 self.add_well(well)
 
-    def add_well(self, well: 'Well'):
+    def add_well(self, well: Well, name_override: Optional[str] = None):
         """
-        Adds a well to the project, keyed by its UWI.
+        Adds a well to the project, keyed by its name.
 
         Args:
             well (Well): The Well object to add.
+            name_override (Optional[str]): A name to use if the well's own name is not suitable (e.g., filename).
         
         Raises:
-            ValueError: If the well does not have a UWI.
+            ValueError: If the well cannot be given a unique name.
         """
-        if not well.uwi:
-            raise ValueError(f"Well '{well.name}' cannot be added to project because it has no UWI.")
-        if well.uwi in self.wells:
-            print(f"Warning: Well with UWI {well.uwi} already exists in the project. Overwriting.")
-        self.wells[well.uwi] = well
+        key = well.name or name_override
+        if not key:
+            raise ValueError("Well cannot be added to project because it has no name.")
+        if key in self.wells:
+            print(f"Warning: Well with name '{key}' already exists in the project. Overwriting.")
+        self.wells[key] = well
 
-    def get_well(self, uwi: str) -> Optional['Well']:
-        """Retrieves a well from the project by its UWI."""
-        return self.wells.get(uwi)
+    def get_well(self, name: str) -> Optional[Well]:
+        """Retrieves a well from the project by its name."""
+        return self.wells.get(name)
 
     def apply_calculation(self, calculation_func: Callable, **kwargs):
         """
@@ -88,13 +90,13 @@ class Project:
         plt.style.use('seaborn-v0_8-whitegrid')
         fig, ax = plt.subplots(figsize=(10, 8))
 
-        for uwi, well in self.wells.items():
+        for name, well in self.wells.items():
             try:
                 # Use the well's get_interval method (you'll need to add/verify this in your Well class)
                 interval_df = well.get_interval(top_name, base_name)
                 
                 if not all(c in interval_df.columns for c in [x_curve, y_curve]):
-                    print(f"Warning: Skipping well {well.name} (UWI: {uwi}) - missing required curves for crossplot.")
+                    print(f"Warning: Skipping well {well.name} (UWI: {well.uwi}) - missing required curves for crossplot.")
                     continue
 
                 if color_by_curve and color_by_curve in interval_df.columns:
@@ -106,7 +108,7 @@ class Project:
                     ax.scatter(interval_df[x_curve], interval_df[y_curve], label=well.name, alpha=0.7)
 
             except (ValueError, KeyError) as e:
-                print(f"Warning: Skipping well {well.name} (UWI: {uwi}) for crossplot: {e}")
+                print(f"Warning: Skipping well {well.name} (UWI: {well.uwi}) for crossplot: {e}")
 
         ax.set_xlabel(x_curve)
         ax.set_ylabel(y_curve)
